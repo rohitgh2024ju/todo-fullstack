@@ -1,7 +1,8 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { userModel } from '../models/model.js';
-import { JWT_SECRET } from '../../config/jwt.js';
+import dotenv from 'dotenv';
+dotenv.config();
 
 
 async function signup(req, res) {
@@ -54,7 +55,7 @@ async function login(req, res) {
 
         const token = jwt.sign(
             { id: user._id, username: user.username },
-            JWT_SECRET,
+            process.env.JWT_SECRET,
             { expiresIn: '2h' }
         );
 
