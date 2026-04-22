@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>TaskFlow Sign Up</title>
+    <link rel="icon" href="/logo.svg" type="image/svg+xml">
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .logo-font {
+            font-family: 'Playfair Display', serif;
+        }
+    </style>
+</head>
+
+<body class="bg-[#f5f5f5]">
+
+    <!-- HEADER -->
+    <div class="text-center py-10 bg-white border-b">
+        <div class="flex items-center justify-center gap-3">
+            <img src="/logo.svg" alt="Logo" class="w-10 h-10">
+
+            <h1 class="logo-font text-4xl italic">TaskFlow</h1>
+
+        </div>
+        <p class="text-gray-500 mt-2">Join us and get started</p>
+    </div>
+
+    <!-- CARD -->
+    <div class="flex justify-center items-center mt-20">
+        <div class="bg-white p-10 rounded-2xl shadow-md w-[400px]">
+
+            <h2 class="text-2xl font-semibold text-center mb-6">Sign Up</h2>
+
+            <!-- Message -->
+            <p id="signup-result" class="text-red-500 text-sm text-center mb-3 transition-all duration-200"></p>
+
+            <form id="signupForm" class="space-y-4">
+
+                <input type="text" name="username" placeholder="Username" required
+                    class="w-full p-3 border rounded-lg bg-gray-100 outline-none" />
+
+                <input type="email" name="email" placeholder="Email" required
+                    class="w-full p-3 border rounded-lg bg-gray-100 outline-none" />
+
+                <input type="password" name="password" placeholder="Password" required
+                    class="w-full p-3 border rounded-lg bg-gray-100 outline-none" />
+
+                <button type="submit" class="w-full py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
+                    Sign Up
+                </button>
+
+            </form>
+
+            <p class="text-sm text-center mt-4 text-gray-500">
+                Already have an account?
+                <a href="/login" class="text-blue-500">Login</a>
+            </p>
+
+
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('signupForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const form = e.target;
+            const btn = form.querySelector('button');
+            const resultBox = document.getElementById('signup-result');
+
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData);
+
+            // loading state
+            btn.innerText = "Signing up...";
+            btn.disabled = true;
+            resultBox.innerText = "";
+
+            try {
+                const res = await fetch('/auth/signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await res.json();
+
+                if (res.ok) {
+                    resultBox.classList.remove('text-red-500');
+                    resultBox.classList.add('text-green-500');
+                    resultBox.innerText = "Signup successful! Redirecting...";
+
+                    setTimeout(() => {
+                        window.location.href = '/login';
+                    }, 1500);
+                } else {
+                    resultBox.classList.remove('text-green-500');
+                    resultBox.classList.add('text-red-500');
+                    resultBox.innerText = result.error || "Signup failed";
+                }
+
+            } catch (err) {
+                resultBox.innerText = "Something went wrong";
+            } finally {
+                btn.innerText = "Sign Up";
+                btn.disabled = false;
+            }
+        });
+    </script>
+
+</body>
+
+</html>
